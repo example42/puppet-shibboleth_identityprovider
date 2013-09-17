@@ -22,14 +22,10 @@ class shibboleth_identityprovider::install inherits shibboleth_identityprovider 
       }
     }
 
-    source: {
+    upstream: {
 
       # $created_file = url_parse($shibboleth_identityprovider::real_install_source,'filename')
       $created_file = "apache-shibboleth_identityprovider-${shibboleth_identityprovider::version}"
-      if $shibboleth_identityprovider::bool_create_user == true {
-        require shibboleth_identityprovider::user
-      }
-      include shibboleth_identityprovider::skel
 
       puppi::netinstall { 'netinstall_shibboleth_identityprovider':
         url                 => $shibboleth_identityprovider::real_install_source,
@@ -48,19 +44,9 @@ class shibboleth_identityprovider::install inherits shibboleth_identityprovider 
         require => Puppi::Netinstall['netinstall_shibboleth_identityprovider'],
       }
 
-      file { 'shibboleth_identityprovider_service':
-        ensure  => "${shibboleth_identityprovider::install_destination}/${created_file}/bin/shibboleth_identityprovider" ,
-        path    => '/etc/init.d/shibboleth_identityprovider' ,
-        require => Puppi::Netinstall['netinstall_shibboleth_identityprovider'],
-      }
     }
 
     puppi: {
-
-      if $shibboleth_identityprovider::bool_create_user == true {
-        require shibboleth_identityprovider::user
-      }
-      include shibboleth_identityprovider::skel
 
       puppi::project::tar { 'shibboleth_identityprovider':
         source                   => $shibboleth_identityprovider::real_install_source,
@@ -77,12 +63,6 @@ class shibboleth_identityprovider::install inherits shibboleth_identityprovider 
       file { 'shibboleth_identityprovider_link':
         ensure  => "${shibboleth_identityprovider::install_destination}/${created_file}" ,
         path    => "${shibboleth_identityprovider::install_destination}/shibboleth_identityprovider" ,
-        require => Puppi::Project::Tar['shibboleth_identityprovider'],
-      }
-
-      file { 'shibboleth_identityprovider_service':
-        ensure  => "${shibboleth_identityprovider::install_destination}/${created_file}/bin/shibboleth_identityprovider" ,
-        path    => '/etc/init.d/shibboleth_identityprovider' ,
         require => Puppi::Project::Tar['shibboleth_identityprovider'],
       }
 

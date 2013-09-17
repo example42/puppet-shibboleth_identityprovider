@@ -15,25 +15,16 @@
 class shibboleth_identityprovider::params {
 
   ### Module specific variables
-  $install_dependencies = true
-  $install = 'package'
+  $dependency_class = 'shibboleth_identityprovider::dependency'
+  $install = 'upstream'
   $install_source = undef
   $install_destination = '/opt'
-  $base_install_source = 'http://www.eu.apache.org/dist/shibboleth_identityprovider/apache-shibboleth_identityprovider'
-  $create_user = true
+  $base_install_source = 'http://shibboleth.net/downloads/identity-provider'
 
   ### Application related parameters
 
   $package = $::operatingsystem ? {
     default => 'shibboleth_identityprovider',
-  }
-
-  $service = $::operatingsystem ? {
-    default => 'shibboleth_identityprovider',
-  }
-
-  $service_status = $::operatingsystem ? {
-    default => true,
   }
 
   $process = $::operatingsystem ? {
@@ -49,12 +40,11 @@ class shibboleth_identityprovider::params {
   }
 
   $config_dir = $::operatingsystem ? {
-    default => '/etc/shibboleth_identityprovider',
+    default => '/etc/shibboleth',
   }
 
   $config_file = $::operatingsystem ? {
-    'ubuntu' => '/etc/shibboleth_identityprovider/instances-available/main/shibboleth_identityprovider.xml',
-    default  => '/etc/shibboleth_identityprovider/shibboleth_identityprovider.xml',
+    default  => '/etc/shibboleth/shibboleth_identityprovider.conf',
   }
 
   $config_file_mode = $::operatingsystem ? {
@@ -67,11 +57,6 @@ class shibboleth_identityprovider::params {
 
   $config_file_group = $::operatingsystem ? {
     default => 'root',
-  }
-
-  $config_file_init = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/shibboleth_identityprovider',
-    default                   => '/etc/sysconfig/shibboleth_identityprovider',
   }
 
   $pid_file = $::operatingsystem ? {
@@ -90,9 +75,6 @@ class shibboleth_identityprovider::params {
     default => '/var/log/shibboleth_identityprovider/shibboleth_identityprovider.log',
   }
 
-  $port = '8161'
-  $protocol = 'tcp'
-
   # General Settings
   $my_class = ''
   $source = ''
@@ -100,20 +82,13 @@ class shibboleth_identityprovider::params {
   $source_dir_purge = false
   $template = ''
   $options = ''
-  $service_autorestart = true
   $version = 'present'
   $absent = false
-  $disable = false
-  $disableboot = false
 
   ### General module variables that can have a site or per module default
   $monitor = false
   $monitor_tool = ''
   $monitor_target = $::ipaddress
-  $firewall = false
-  $firewall_tool = ''
-  $firewall_src = '0.0.0.0/0'
-  $firewall_dst = $::ipaddress
   $puppi = false
   $puppi_helper = 'standard'
   $debug = false
