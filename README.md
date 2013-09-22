@@ -28,20 +28,26 @@ For RedHat derivatives it requires Example42's yum module (or at least yum/manif
         }
 
 
-* Install shibboleth_identityprovider directly from upstream site. Must specify the wanted version. Also, by default, an shibboleth_identityprovider user is created which runs the service
+* Install shibboleth_identityprovider directly from upstream site. Must specify the wanted version.
 
         class { 'shibboleth_identityprovider':
           install             => 'source',
           version             => '2.4.0',
-          install_destination => '/opt',      # Default value
-          create_user         => true,        # Default value
-          process_user        => 'shibboleth_identityprovider',  # Default value
+          home_destination    => '/opt',      # Default value
         }
 
 * Install shibboleth_identityprovider via package
 
         class { 'shibboleth_identityprovider':
           install => 'package',
+        }
+
+* Install shibboleth_identityprovider and deploy it to Tomcat. You can use a custom, different, class to manage Tomcat
+
+        class { 'shibboleth_identityprovider':
+          install             => 'source',
+          version             => '2.4.0',
+          appserver_class     => 'shibboleth_identityprovider::appserver::tomcat',
         }
 
 * Remove shibboleth_identityprovider package

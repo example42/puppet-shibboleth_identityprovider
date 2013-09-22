@@ -16,7 +16,7 @@ class shibboleth_identityprovider::params {
 
   ### Module specific variables
 
-  $appserver = ''
+  $appserver_class = ''
   $dependency_class = 'shibboleth_identityprovider::dependency'
 
   $java_home = '/usr/lib/jvm/jre'
