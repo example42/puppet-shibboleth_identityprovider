@@ -21,36 +21,27 @@ For RedHat derivatives it requires Example42's yum module (or at least yum/manif
 
 ## USAGE - Basic management
 
-* Install shibboleth_identityprovider with default settings
-
-        class { 'shibboleth_identityprovider': }
-
-* Install shibboleth_identityprovider without including the (needed) dependencies that rely on other Example42 modules. When you set install_dependencies to false you need to provide in some way the equivant of what is placed in shibboleth_identityprovider/manifests/dependencies.pp
+* Install shibboleth_identityprovider from upstream source (you must specify the version)
 
         class { 'shibboleth_identityprovider':
-          install_dependencies => false,
+          version => '2.4.0',
         }
+
 
 * Install shibboleth_identityprovider directly from upstream site. Must specify the wanted version. Also, by default, an shibboleth_identityprovider user is created which runs the service
 
         class { 'shibboleth_identityprovider':
           install             => 'source',
-          version             => '5.8.0',
+          version             => '2.4.0',
           install_destination => '/opt',      # Default value
           create_user         => true,        # Default value
           process_user        => 'shibboleth_identityprovider',  # Default value
         }
 
-* Install a specific version of shibboleth_identityprovider package
+* Install shibboleth_identityprovider via package
 
         class { 'shibboleth_identityprovider':
-          version => '1.0.1',
-        }
-
-* Disable shibboleth_identityprovider service.
-
-        class { 'shibboleth_identityprovider':
-          disable => true
+          install => 'package',
         }
 
 * Remove shibboleth_identityprovider package

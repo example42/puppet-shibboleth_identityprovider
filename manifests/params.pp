@@ -15,10 +15,17 @@
 class shibboleth_identityprovider::params {
 
   ### Module specific variables
+
+  $appserver = ''
   $dependency_class = 'shibboleth_identityprovider::dependency'
+
+  $java_home = '/usr/lib/jvm/jre'
+  $idp_hostname = $::fqdn
+  $idp_keypass = 's4cr3t'
   $install = 'upstream'
   $install_source = undef
-  $install_destination = '/opt'
+  $install_destination = '/usr/src'
+  $home_destination = '/opt'
   $base_install_source = 'http://shibboleth.net/downloads/identity-provider'
 
   ### Application related parameters
@@ -36,7 +43,7 @@ class shibboleth_identityprovider::params {
   }
 
   $process_user = $::operatingsystem ? {
-    default => 'shibboleth_identityprovider',
+    default => 'root',
   }
 
   $config_dir = $::operatingsystem ? {
@@ -64,7 +71,7 @@ class shibboleth_identityprovider::params {
   }
 
   $data_dir = $::operatingsystem ? {
-    default => '/var/log/shibboleth_identityprovider/shibboleth_identityprovider-data',
+    default => '/var/lib/shibboleth_identityprovider',
   }
 
   $log_dir = $::operatingsystem ? {

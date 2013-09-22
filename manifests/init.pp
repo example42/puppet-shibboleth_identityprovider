@@ -178,6 +178,8 @@
 #   Alessandro Franceschi <al@lab42.it/>
 #
 class shibboleth_identityprovider (
+  $appserver_class      = params_lookup('appserver_class'),
+  $home_destination     = params_lookup('home_destination'),
   $install              = params_lookup('install'),
   $install_source       = params_lookup('install_source'),
   $install_destination  = params_lookup('install_destination'),
@@ -278,12 +280,19 @@ class shibboleth_identityprovider (
     default => "${shibboleth_identityprovider::install_destination}/shibboleth-identityprovider/conf",
   }
 
+  $home = "${shibboleth_identityprovider::home_destination}/shibboleth-identityprovider-${shibboleth_identityprovider::version}"
+
+  if $shibboleth_identityprovider::version == 'present'
+  and $shibboleth_identityprovider::install != 'package' {
+    fail("When using \$install != package you must specify the version to use!")
+  }
+
   ### Managed resources
   # Installation is managed in a dedicated class
   require shibboleth_identityprovider::install
 
-  if $shibboleth_identityprovider::source or
-  if $shibboleth_identityprovider::template {
+  if $shibboleth_identityprovider::source
+  or $shibboleth_identityprovider::template {
     file { 'shibboleth_identityprovider.conf':
       ensure  => $shibboleth_identityprovider::manage_file,
       path    => $shibboleth_identityprovider::real_config_file,
@@ -318,6 +327,10 @@ class shibboleth_identityprovider (
     include $shibboleth_identityprovider::my_class
   }
 
+  ### Include appserver class, if defined
+  if $shibboleth_identityprovider::appserver_class {
+    include $shibboleth_identityprovider::appserver_class
+  }
 
   ### Provide puppi data, if enabled ( puppi => true )
   if $shibboleth_identityprovider::bool_puppi == true {

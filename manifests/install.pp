@@ -24,8 +24,7 @@ class shibboleth_identityprovider::install inherits shibboleth_identityprovider 
 
     upstream: {
 
-      # $created_file = url_parse($shibboleth_identityprovider::real_install_source,'filename')
-      $created_file = "apache-shibboleth_identityprovider-${shibboleth_identityprovider::version}"
+      $created_file = "shibboleth-identityprovider-${shibboleth_identityprovider::version}"
 
       puppi::netinstall { 'netinstall_shibboleth_identityprovider':
         url                 => $shibboleth_identityprovider::real_install_source,
@@ -35,41 +34,26 @@ class shibboleth_identityprovider::install inherits shibboleth_identityprovider 
         extracted_dir       => $created_file,
         owner               => $shibboleth_identityprovider::process_user,
         group               => $shibboleth_identityprovider::process_user,
-        before              => File ['shibboleth_identityprovider_link'],
+      }
+
+      exec { 'install_shibboleth_identityprovider':
+        command     => "${shibboleth_identityprovider::install_destination}/${created_file}/install.sh",
+        cwd         => "${shibboleth_identityprovider::install_destination}/${created_file}",
+        environment => [
+          "JAVA_HOME=${shibboleth_identityprovider::java_home}",
+          "ANT_OPTS=-Didp.home.input=${shibboleth_identityprovider::home} -Didp.hostname.input=${shibboleth_identityprovider::idp_hostname} -Didp.keystore.pass=${shibboleth_identityprovider::idp_keypass}",
+        ],
+        creates     => "${shibboleth_identityprovider::home}/war/idp.war",
+        require     => Puppi::Netinstall['netinstall_shibboleth_identityprovider'],
+        timeout     => '3600',
       }
 
       file { 'shibboleth_identityprovider_link':
-        ensure  => "${shibboleth_identityprovider::install_destination}/${created_file}" ,
-        path    => "${shibboleth_identityprovider::install_destination}/shibboleth_identityprovider" ,
-        require => Puppi::Netinstall['netinstall_shibboleth_identityprovider'],
+        ensure  => $shibboleth_identityprovider::home,
+        path    => "${shibboleth_identityprovider::home_destination}/shibboleth-idp" ,
+        require => Exec['install_shibboleth_identityprovider'],
       }
 
     }
-
-    puppi: {
-
-      puppi::project::tar { 'shibboleth_identityprovider':
-        source                   => $shibboleth_identityprovider::real_install_source,
-        deploy_root              => $shibboleth_identityprovider::install_destination,
-        report_email             => 'root',
-        user                     => $shibboleth_identityprovider::process_user,
-        auto_deploy              => true,
-        check_deploy             => false,
-        run_checks               => false,
-        enable                   => true,
-        before                   => File ['shibboleth_identityprovider_link'],
-      }
-
-      file { 'shibboleth_identityprovider_link':
-        ensure  => "${shibboleth_identityprovider::install_destination}/${created_file}" ,
-        path    => "${shibboleth_identityprovider::install_destination}/shibboleth_identityprovider" ,
-        require => Puppi::Project::Tar['shibboleth_identityprovider'],
-      }
-
-    }
-
-    default: { }
-
   }
-
 }
